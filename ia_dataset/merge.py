@@ -2,9 +2,9 @@ from typing import List
 
 import numpy as np
 
-from ia_dataset.annotation import MLAnnotation
-from ia_dataset.dataset import MLDataset
-from ia_dataset.image import MLImage
+from .annotation import MLAnnotation
+from .dataset import MLDataset
+from .image import MLImage
 
 
 def iou_matrix(annotations: List[MLAnnotation],

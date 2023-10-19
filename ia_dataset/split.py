@@ -36,7 +36,7 @@ def split(dataset: MLDataset,
 
         # If we want some negative examples as well
         if negative_sample_rate > 0.0:
-            has_no_annotation_idxs = [i for i, image in enumerate(self.images) if len(image.annotations) == 0]
+            has_no_annotation_idxs = [i for i, image in enumerate(dataset.images) if len(image.annotations) == 0]
             random.shuffle(has_no_annotation_idxs)
             num_negative = min(int(negative_sample_rate * len(has_annotation_idxs)), len(has_no_annotation_idxs))
             num_train = int(num_negative * (1 - val_split))

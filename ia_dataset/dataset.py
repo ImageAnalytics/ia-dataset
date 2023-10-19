@@ -156,7 +156,6 @@ class MLDataset(BaseModel):
     """
     Annotations
     """
-
     def keep_annotations_with_labels(self, labels: List[str]):
         for image in self.images:
             anns = []
@@ -165,8 +164,8 @@ class MLDataset(BaseModel):
                 for lab in ann.scored_labels:
                     if lab.name in labels:
                         new_labels.append(lab)
-                ann.label_names = new_labels
-                if len(ann.label_names) > 0:
+                ann.scored_labels = new_labels
+                if len(ann.scored_labels) > 0:
                     anns.append(ann)
             image.annotations = anns
 
@@ -178,8 +177,8 @@ class MLDataset(BaseModel):
                 for lab in ann.scored_labels:
                     if lab.name not in labels:
                         new_labels.append(lab)
-                ann.label_names = new_labels
-                if len(ann.label_names) > 0:
+                ann.scored_labels = new_labels
+                if len(ann.scored_labels) > 0:
                     anns.append(ann)
             image.annotations = anns
 
@@ -191,8 +190,8 @@ class MLDataset(BaseModel):
                 for lab in ann.scored_labels:
                     if lab.score >= threshold:
                         new_labels.append(lab)
-                ann.label_names = new_labels
-                if len(ann.label_names) > 0:
+                ann.scored_labels = new_labels
+                if len(ann.scored_labels) > 0:
                     anns.append(ann)
             image.annotations = anns
 

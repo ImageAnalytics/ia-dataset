@@ -4,10 +4,10 @@ from typing import List, Dict
 
 from shapely import Polygon
 
-from ia_dataset.annotation import MLAnnotation, MLAnnotationType, MLAnnotationLabel
-from ia_dataset.base import BaseModel
-from ia_dataset.dataset import MLDataset
-from ia_dataset.image import MLImage
+from .annotation import MLAnnotation, MLAnnotationType, MLAnnotationLabel
+from .base import BaseModel
+from .dataset import MLDataset
+from .image import MLImage
 
 
 @dataclass
