@@ -10,6 +10,7 @@ class BaseModel:
 
     class Meta:
         ordered = True
+        skip_none = True
 
     @property
     @classmethod
