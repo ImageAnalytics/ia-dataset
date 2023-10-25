@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Union
 
+import marshmallow
 from marshmallow_dataclass import class_schema
 
 
@@ -11,8 +12,8 @@ class BaseModel:
     class Meta:
         ordered = True
         skip_none = True
+        unknown = marshmallow.EXCLUDE
 
-    @property
     @classmethod
     def schema(cls, *args, **kwargs):
         return class_schema(cls)(*args, **kwargs)
