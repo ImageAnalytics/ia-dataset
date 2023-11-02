@@ -33,6 +33,8 @@ class BaseModel:
         return class_schema(cls)().loads(json)
 
     def save(self, path: Union[Path, str], indent=4):
+        path = Path(path)
+        path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w") as fp:
             metadata = class_schema(self.__class__)().dumps(self, indent=indent)
             fp.write(metadata)
