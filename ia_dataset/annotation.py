@@ -42,7 +42,7 @@ class MLAnnotationLabel(BaseModel):
 class MLAnnotation(BaseModel):
     type: MLAnnotationType
     polygon: Polygon = field(metadata=dict(marshmallow_field=PolygonField()))
-    scored_labels: List[MLAnnotationLabel] = field(default_factory=list)
+    labels: List[MLAnnotationLabel] = field(default_factory=list)
 
     is_track: bool = False
     track_id: Optional[int] = None
@@ -56,19 +56,19 @@ class MLAnnotation(BaseModel):
 
     @property
     def label_name(self):
-        return self.scored_labels[0].name
+        return self.labels[0].name
 
     @property
     def label_names(self):
-        return [label.name for label in self.scored_labels]
+        return [label.name for label in self.labels]
 
     @property
     def score(self):
-        return self.scored_labels[0].score
+        return self.labels[0].score
 
     @property
     def scores(self):
-        return [label.score for label in self.scored_labels]
+        return [label.score for label in self.labels]
 
     def bbox_x1y1x2y2(self, as_int=False):
         bounds = self.polygon.bounds

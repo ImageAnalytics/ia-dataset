@@ -72,10 +72,10 @@ class MLDataset(BaseModel):
             for ann in image.annotations:
                 # If new label already exists, just remove the original
                 if new in ann.label_names:
-                    ann.scored_labels = [label for label in ann.scored_labels if label.name != original]
+                    ann.labels = [label for label in ann.labels if label.name != original]
                 # Otherwise, replace the original with the new
                 else:
-                    for label in ann.scored_labels:
+                    for label in ann.labels:
                         if label.name == original:
                             label.name = new
         self.update_labels_from_annotations()
@@ -85,7 +85,7 @@ class MLDataset(BaseModel):
             label.name += suffix
         for image in self.images:
             for ann in image.annotations:
-                for label in ann.scored_labels:
+                for label in ann.labels:
                     label.name += suffix
         self.update_labels_from_annotations()
 
@@ -161,11 +161,11 @@ class MLDataset(BaseModel):
             anns = []
             for ann in image.annotations:
                 new_labels = []
-                for lab in ann.scored_labels:
+                for lab in ann.labels:
                     if lab.name in labels:
                         new_labels.append(lab)
-                ann.scored_labels = new_labels
-                if len(ann.scored_labels) > 0:
+                ann.labels = new_labels
+                if len(ann.labels) > 0:
                     anns.append(ann)
             image.annotations = anns
 
@@ -174,11 +174,11 @@ class MLDataset(BaseModel):
             anns = []
             for ann in image.annotations:
                 new_labels = []
-                for lab in ann.scored_labels:
+                for lab in ann.labels:
                     if lab.name not in labels:
                         new_labels.append(lab)
-                ann.scored_labels = new_labels
-                if len(ann.scored_labels) > 0:
+                ann.labels = new_labels
+                if len(ann.labels) > 0:
                     anns.append(ann)
             image.annotations = anns
 
@@ -187,11 +187,11 @@ class MLDataset(BaseModel):
             anns = []
             for ann in image.annotations:
                 new_labels = []
-                for lab in ann.scored_labels:
+                for lab in ann.labels:
                     if lab.score >= threshold:
                         new_labels.append(lab)
-                ann.scored_labels = new_labels
-                if len(ann.scored_labels) > 0:
+                ann.labels = new_labels
+                if len(ann.labels) > 0:
                     anns.append(ann)
             image.annotations = anns
 

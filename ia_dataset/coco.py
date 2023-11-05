@@ -114,7 +114,7 @@ class CocoConverter:
         for coco_annotation in coco_data.annotations:
             annotation = MLAnnotation(
                 type=MLAnnotationType.RECT,
-                scored_labels=[MLAnnotationLabel(label_dict[coco_annotation.category_id])],
+                labels=[MLAnnotationLabel(label_dict[coco_annotation.category_id])],
                 polygon=Polygon.from_bounds(
                     coco_annotation.bbox[0],
                     coco_annotation.bbox[1],
