@@ -99,7 +99,7 @@ def split(dataset: MLDataset,
             image.annotations = []
 
         # Indices of images with annotations
-        has_annotation_idxs = [i for i, image in enumerate(dataset.images) if len(image.image_scored_labels) > 0]
+        has_annotation_idxs = [i for i, image in enumerate(dataset.images) if len(image.labels) > 0]
         random.shuffle(has_annotation_idxs)
         num_train = int(len(has_annotation_idxs) * (1 - val_split))
         train_idxs = has_annotation_idxs[:num_train]

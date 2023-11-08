@@ -26,7 +26,7 @@ class MLImage(BaseModel):
     timestamp: Optional[datetime] = None
     status: Optional[MLImageStatus] = None
     annotations: List[MLAnnotation] = field(default_factory=list)
-    image_scored_labels: List[MLAnnotationLabel] = field(default_factory=list)
+    labels: List[MLAnnotationLabel] = field(default_factory=list)
 
     def get_key(self, use_filename=False):
         if use_filename:
@@ -38,16 +38,16 @@ class MLImage(BaseModel):
     Labels
     """
     @property
-    def labels(self):
+    def label_names(self):
         label_names = set()
-        for scored_label in self.image_scored_labels:
+        for scored_label in self.labels:
             label_names.add(scored_label.name)
         for ann in self.annotations:
             label_names.update(ann.label_names)
         return list(label_names)
 
     def has_label(self, label: str):
-        return label in self.labels
+        return label in self.label_names
 
     def has_labels(self, labels: list):
         for label in labels:
@@ -57,7 +57,7 @@ class MLImage(BaseModel):
 
     @property
     def image_labels(self):
-        return [label.name for label in self.image_scored_labels]
+        return [label.name for label in self.labels]
 
     def has_image_label(self, label: str):
         return label in self.image_labels

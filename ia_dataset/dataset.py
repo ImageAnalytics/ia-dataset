@@ -92,14 +92,14 @@ class MLDataset(BaseModel):
     def remove_unused_labels(self):
         label_names = set()
         for image in self.images:
-            for label in image.labels:
+            for label in image.label_names:
                 label_names.add(label)
         self.labels = [label for label in self.labels if label.name in label_names]
 
     def update_labels_from_annotations(self):
         labels = set()
         for image in self.images:
-            for label in image.labels:
+            for label in image.label_names:
                 labels.add(label)
         self.add_labels_if_missing_by_name(list(labels))
 
@@ -248,7 +248,7 @@ class MLDataset(BaseModel):
         self.update_labels_from_annotations()
         counts = {k.name: 0 for k in self.labels}
         for image in self.images:
-            for ann in image.image_scored_labels:
+            for ann in image.labels:
                 counts[ann.name] += 1
         return counts
 
