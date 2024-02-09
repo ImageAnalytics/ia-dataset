@@ -1,3 +1,4 @@
+from enum import Enum, auto
 from typing import List
 
 import numpy as np
@@ -5,6 +6,13 @@ import numpy as np
 from .annotation import MLAnnotation
 from .dataset import MLDataset
 from .image import MLImage
+
+
+class MLMergeMode(Enum):
+    REPLACE = auto()
+    BOTH = auto()
+    MISSING = auto()
+    IF_NONE_IN_IMAGE = auto()
 
 
 def iou_matrix(annotations: List[MLAnnotation],
@@ -16,9 +24,9 @@ def iou_matrix(annotations: List[MLAnnotation],
     return ious
 
 
-def merge_image(image: MLImage,
-                image_in: MLImage,
-                iou_threshold: float = 0.5):
+def merge_objects_in_image(image: MLImage,
+                           image_in: MLImage,
+                           iou_threshold: float = 0.5):
     # Get the ious of all the annotations
     ious = iou_matrix(image.annotations, image_in.annotations)
 
@@ -34,8 +42,43 @@ def merge_image(image: MLImage,
         image.annotations.append(image_in.annotations[i])
 
 
+def merge_image(image: MLImage,
+                image_in: MLImage,
+                mode: MLMergeMode,
+                iou_threshold: float = 0.5):
+    if mode == MLMergeMode.REPLACE:
+        # Replace all object annotations
+        image.annotations = image_in.annotations
+        # Replace image labels
+        image.labels = image_in.labels
+    if mode == MLMergeMode.BOTH:
+        # Add all object annotations
+        image.annotations.extend(image_in.annotations)
+        # Add image labels if not already there
+        existing_labels = set([label.name for label in image.labels])
+        for label in image_in.labels:
+            if label.name not in existing_labels:
+                image.labels.append(label)
+    elif mode == MLMergeMode.MISSING:
+        # Add missing object annotations if their iou with existing annotations is below the threshold
+        merge_objects_in_image(image, image_in, iou_threshold)
+        # Add image labels if not already there
+        existing_labels = set([label.name for label in image.labels])
+        for label in image_in.labels:
+            if label.name not in existing_labels:
+                image.labels.append(label)
+    elif mode == MLMergeMode.IF_NONE_IN_IMAGE:
+        # Add object annotations if there are none in the image
+        if len(image.annotations) == 0:
+            image.annotations.extend(image_in.annotations)
+        # Add image labels if none exist
+        if len(image.labels) == 0:
+            image.labels.extend(image_in.labels)
+
+
 def merge(dataset: MLDataset,
           dataset_merge: MLDataset,
+          mode: MLMergeMode,
           iou_threshold: float = 0.5,
           as_nv: bool = True,
           use_key: bool = True):
@@ -53,10 +96,11 @@ def merge(dataset: MLDataset,
 
         for key, image in image_dict.items():
             if key in image_dict_merge:
-                merge_image(image, image_dict_merge[key], iou_threshold)
+                merge_image(image, image_dict_merge[key], mode, iou_threshold)
+
     else:
         for image, image_in in zip(dataset.images, dataset_merge.images):
-            merge_image(image, image_in, iou_threshold)
+            merge_image(image, image_in, mode, iou_threshold)
 
     dataset.update_labels_from_annotations()
 

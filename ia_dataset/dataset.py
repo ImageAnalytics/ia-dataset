@@ -4,7 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
-from .annotation import MLAnnotation
+from .annotation import MLAnnotation, MLAnnotationType
 from .base import BaseModel
 from .image import MLImage, MLImageStatus
 from .label import MLLabel
@@ -194,6 +194,25 @@ class MLDataset(BaseModel):
                 if len(ann.labels) > 0:
                     anns.append(ann)
             image.annotations = anns
+
+    def keep_annotations_with_types(self, types: List[MLAnnotationType]):
+        if MLAnnotationType.IMAGE not in types:
+            for image in self.images:
+                image.labels = []
+        for image in self.images:
+            anns = []
+            for ann in image.annotations:
+                if ann.type in types:
+                    anns.append(ann)
+            image.annotations = anns
+
+    def has_annotations(self):
+        for image in self.images:
+            if len(image.labels) > 0:
+                return True
+            if len(image.annotations) > 0:
+                return True
+        return False
 
     """
     Tracks
